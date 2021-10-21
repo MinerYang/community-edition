@@ -30,6 +30,14 @@ encodedkey: #@overlay/remove
 keyfile: /etc/registry/gcs-key.json
 #@ end
 
+#@ def getStrategyType():
+#@   if registry.accessMode == "ReadWriteOnce" and storage.type == "filesystem":
+#@     return "Recreate"
+#@   else:
+#@     return "RollingUpdate"
+#@   end
+#@ end
+
 #@ def get_registry_log_level():
 #@   if values.logLevel == "warning":
 #@     return "warn"
@@ -140,6 +148,8 @@ spec:
 ---
 spec:
   replicas: #@ values.registry.replicas
+  strategy:
+    type: #@ getStrategyType()
   template:
     spec:
       containers:
